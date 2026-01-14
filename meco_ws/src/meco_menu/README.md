@@ -136,36 +136,43 @@ ros2 launch meco_menu menu.launch.py menu_config:=/path/to/custom_menu.yaml
 ### 1. Building the Workspace
 Build and source the workspace:
 
-![Build demo](videos/build.gif)
+![Build demo](../../../videos/build.gif)
 
-<p align="center"><em>Baseline method of using human input for motor commands.</em></p>
-
+<p align="center"><em>Build and Source the Workspace.</em></p>
 
 
 ### 2. Launching the TUI
-Start the debug menu interface:
 
-[Upload: videos/TUI.mp4]
+![TUI](../../../videos/TUI.gif)
+
+<p align="center"><em>Start the debug menu interface.</em></p>
 
 ### 3. Navigation
 Navigate up/down through menu items:
 
-[Upload: videos/Up_Down.mp4]
+![Up_Down](../../../videos/Up_Down.gif)
+
+<p align="center"><em>Up and Down Navigation.</em></p>
 
 ### 4. Quick Jump
 Jump directly to menu items 1-4:
 
-[Upload: videos/jump.mp4]
+![Up_Down](../../../videos/jump.gif)
+
+<p align="center"><em>Jumo to Selection.</em></p>
 
 ### 5. Error Handling
-Back button and error recovery:
 
-[Upload: videos/error.mp4]
+![Up_Down](../../../videos/error.gif)
+
+<p align="center"><em>Back Button and Error Recovery.</em></p>
 
 ### 6. Safe Kill
 Safely terminate running processes:
 
-[Upload: ./videos/safe_kill.mp4]
+![Up_Down](../../../videos/safe_kill.gif)
+
+<p align="center"><em>Killing a process.</em></p>
 
 ## Testing
 
