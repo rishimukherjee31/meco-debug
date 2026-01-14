@@ -1,0 +1,172 @@
+# MeCO Menu Configuration
+# Max depth: 2 levels (root -> submenu -> items)
+#
+# Process Types:
+#   - submenu:     Container for other items (navigable)
+#   - docker:      Run a Docker container
+#   - node:        ros2 run / ros2 launch
+#   - ros_command: Generic ros2 CLI command (param, topic, etc.)
+#   - command:     Generic bash/shell command
+
+version: 1
+
+settings:
+  max_depth: 2
+  display_width: 20
+
+label: MeCO Menu
+display_side: MeCO Menu
+display_f_stbd: MENU
+display_f_port: ""
+
+# Main menu items
+menu:
+  # ============ Perception Submenu ============
+  - id: perception
+    label: Perception
+    display_side: Perception
+    display_f_stbd: PCPT
+    display_f_port: ""
+    type: submenu
+    children:
+      - id: segmentation
+        label: Segmentation
+        display_side: Segmentation
+        display_f_stbd: SEG
+        display_f_port: ""
+        type: docker
+        container_name: perception_seg
+        image: meco/perception:latest
+        command: "ros2 launch segment segment.launch.py"
+        flags: "--network host --rm"
+        gpu: true
+
+      - id: detection
+        label: Detection
+        display_side: Detection
+        display_f_stbd: DET
+        display_f_port: ""
+        type: node
+        package: detection
+        executable: detector_node
+        arguments: ""
+        use_launch: false
+
+      - id: detection_launch
+        label: Detection Full
+        display_side: Detection Full
+        display_f_stbd: DETF
+        display_f_port: ""
+        type: node
+        package: detection
+        executable: detection.launch.py
+        arguments: "model:=yolov8"
+        use_launch: true
+
+  # ============ Navigation Submenu ============
+  - id: navigation
+    label: Navigation
+    display_side: Navigation
+    display_f_stbd: NAV
+    display_f_port: ""
+    type: submenu
+    children:
+      - id: waypoint_nav
+        label: Waypoint Nav
+        display_side: Waypoint Nav
+        display_f_stbd: WPT
+        display_f_port: ""
+        type: docker
+        container_name: nav_waypoint
+        image: meco/navigation:latest
+        command: "ros2 launch nav waypoint.launch.py"
+        flags: "--network host --rm"
+        gpu: false
+
+      - id: station_keep
+        label: Station Keep
+        display_side: Station Keep
+        display_f_stbd: STN
+        display_f_port: ""
+        type: node
+        package: navigation
+        executable: station_keep_node
+        use_launch: false
+
+  # ============ Parameters Submenu ============
+  - id: parameters
+    label: Parameters
+    display_side: Parameters
+    display_f_stbd: PARM
+    display_f_port: ""
+    type: submenu
+    children:
+      - id: lights_on
+        label: Lights On
+        display_side: Lights On
+        display_f_stbd: LGT
+        display_f_port: "ON"
+        type: ros_command
+        command: "ros2 param set /lighting brightness 1.0"
+
+      - id: lights_off
+        label: Lights Off
+        display_side: Lights Off
+        display_f_stbd: LGT
+        display_f_port: "OFF"
+        type: ros_command
+        command: "ros2 param set /lighting brightness 0.0"
+
+      - id: camera_mode
+        label: Camera Mode
+        display_side: Camera Mode
+        display_f_stbd: CAM
+        display_f_port: ""
+        type: ros_command
+        command: "ros2 param set /camera mode 'hd'"
+
+  # ============ Recording Submenu ============
+  - id: recording
+    label: Recording
+    display_side: Recording
+    display_f_stbd: REC
+    display_f_port: ""
+    type: submenu
+    children:
+      - id: bag_all
+        label: Bag All
+        display_side: Bag All Topics
+        display_f_stbd: BAG
+        display_f_port: "ALL"
+        type: command
+        command: "ros2 bag record -a -o /data/bags/session"
+        duration: 0
+
+      - id: bag_cameras
+        label: Bag Cameras
+        display_side: Bag Cameras
+        display_f_stbd: BAG
+        display_f_port: "CAM"
+        type: command
+        command: "ros2 bag record /camera/left /camera/right -o /data/bags/cameras"
+        duration: 0
+
+      - id: screenshot
+        label: Screenshot
+        display_side: Screenshot
+        display_f_stbd: SNAP
+        display_f_port: ""
+        type: command
+        command: "ros2 run image_tools cam2image --ros-args -p filename:=/data/screenshot.png"
+        duration: 5
+
+  # ============ Direct Process (not in submenu) ============
+  - id: teleop
+    label: Teleop
+    display_side: Teleop Mode
+    display_f_stbd: TELE
+    display_f_port: ""
+    type: node
+    package: teleop_twist_joy
+    executable: teleop_node
+    use_launch: false
