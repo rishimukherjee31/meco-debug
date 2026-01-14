@@ -129,6 +129,44 @@ ros2 run meco_menu menu_node --ros-args -p config_file:=/path/to/custom_menu.yam
 ros2 launch meco_menu menu.launch.py menu_config:=/path/to/custom_menu.yaml
 ```
 
+## Step-by-Step Video Guide
+
+> **Note:** To embed these videos on GitHub, edit this README on GitHub's website and drag-drop each video file from the `videos/` folder into the appropriate section below. GitHub will upload them and replace the paths with proper embed URLs.
+
+### 1. Building the Workspace
+Build and source the workspace:
+
+![Build demo](videos/build.gif)
+
+<p align="center"><em>Baseline method of using human input for motor commands.</em></p>
+
+
+
+### 2. Launching the TUI
+Start the debug menu interface:
+
+[Upload: videos/TUI.mp4]
+
+### 3. Navigation
+Navigate up/down through menu items:
+
+[Upload: videos/Up_Down.mp4]
+
+### 4. Quick Jump
+Jump directly to menu items 1-4:
+
+[Upload: videos/jump.mp4]
+
+### 5. Error Handling
+Back button and error recovery:
+
+[Upload: videos/error.mp4]
+
+### 6. Safe Kill
+Safely terminate running processes:
+
+[Upload: ./videos/safe_kill.mp4]
+
 ## Testing
 
 ### Quick Test (without ROS topics)
