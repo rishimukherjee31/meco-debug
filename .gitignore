@@ -1,0 +1,22 @@
+# Ignore common video formats (but keep GIFs for README)
+*.mp4
+*.avi
+*.mov
+*.mkv
+*.wmv
+*.flv
+*.webm
+*.m4v
+*.mpg
+*.mpeg
+*.3gp
+*.ogv
+
+# Keep GIF files (these are for README documentation)
+# !*.gif  # Uncomment if you need to explicitly allow GIFs
+
+# Optional: Ignore the entire videos directory if you want to keep source videos local
+# Uncomment the line below to ignore a 'videos' folder
+# /videos/
+
+# Note: GIF files will be tracked by Git for your README
