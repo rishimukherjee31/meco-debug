@@ -131,8 +131,6 @@ ros2 launch meco_menu menu.launch.py menu_config:=/path/to/custom_menu.yaml
 
 ## Step-by-Step Video Guide
 
-> **Note:** To embed these videos on GitHub, edit this README on GitHub's website and drag-drop each video file from the `videos/` folder into the appropriate section below. GitHub will upload them and replace the paths with proper embed URLs.
-
 ### 1. Building the Workspace
 Build and source the workspace:
 
