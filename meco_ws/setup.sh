@@ -8,7 +8,7 @@ echo "MeCO Menu - ROS2 Package Setup"
 echo "=========================================="
 echo ""
 
-# Check if we're in the right directory
+# Check if you're in the right directory
 if [ ! -d "src/meco_menu" ]; then
     echo "ERROR: Please run this script from the meco_ws directory"
     echo "Current directory: $(pwd)"
