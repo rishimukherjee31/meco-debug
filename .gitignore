@@ -17,6 +17,6 @@
 
 # Optional: Ignore the entire videos directory if you want to keep source videos local
 # Uncomment the line below to ignore a 'videos' folder
-# /videos/
+/videos/
 
 # Note: GIF files will be tracked by Git for your README
