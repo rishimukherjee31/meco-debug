@@ -38,6 +38,7 @@ Topics:
 import rclpy
 from rclpy.node import Node
 from std_msgs.msg import Int32, Int8, String
+import time
 
 
 class GestureMenuController(Node):
@@ -45,9 +46,9 @@ class GestureMenuController(Node):
     ROS2 Node that translates hand gestures into menu navigation commands.
     
     Features:
-    - Gesture debouncing to prevent rapid repeated actions
+    - Time-based gesture debouncing to prevent rapid repeated actions
     - Toggle to disable gestures (kill gesture always active for safety)
-    - Visual and audio feedback for each gesture
+    - Audio feedback for each gesture via TTS
     """
     
     # Gesture ID to name mapping
@@ -121,13 +122,15 @@ class GestureMenuController(Node):
         # State variables
         self.gestures_enabled = True
         self.previous_action = ""
-        self.publish_counter = 0
-        self.timeout_counter = 0
-        self.debounce_threshold = 2  # Publish every Nth gesture
-        self.repeat_timeout = 1      # Allow repeat after N cycles
+        self.last_action_time = 0.0
+        
+        # Timing configuration (in seconds)
+        self.debounce_time = 0.3      # Minimum time between any actions
+        self.repeat_cooldown = 1.5    # Time before same action can repeat
         
         self.get_logger().info("Gesture Menu Controller initialized")
         self.get_logger().info(f"Gestures enabled: {self.gestures_enabled}")
+        self.get_logger().info(f"Debounce: {self.debounce_time}s, Repeat cooldown: {self.repeat_cooldown}s")
     
     def toggle_callback(self, msg: Int8) -> None:
         """
@@ -148,11 +151,12 @@ class GestureMenuController(Node):
         """
         Handle incoming gesture detections.
         
-        Implements debouncing and maps gestures to menu actions.
+        Implements time-based debouncing and maps gestures to menu actions.
         """
-        # Debounce: only process every Nth gesture
-        self.publish_counter += 1
-        if self.publish_counter % self.debounce_threshold != 0:
+        current_time = time.time()
+        
+        # Debounce: ignore if too soon after last action
+        if current_time - self.last_action_time < self.debounce_time:
             return
         
         gesture_id = msg.data
@@ -160,21 +164,21 @@ class GestureMenuController(Node):
         
         if action is None:
             # Unknown or unmapped gesture
-            self.timeout_counter += 1
             return
         
         # Kill gesture is ALWAYS active (safety feature)
         if action == 'kill':
             self._handle_kill()
+            self.last_action_time = current_time
+            self.previous_action = action
             return
         
         # All other gestures respect the toggle
         if not self.gestures_enabled:
             return
         
-        # Check for repeat prevention (except for actions that allow repeat)
-        if not self._should_execute(action):
-            self.timeout_counter += 1
+        # Check for repeat prevention
+        if not self._should_execute(action, current_time):
             return
         
         # Execute the action
@@ -182,14 +186,15 @@ class GestureMenuController(Node):
         
         # Update state
         self.previous_action = action
-        self.timeout_counter = 0
+        self.last_action_time = current_time
     
-    def _should_execute(self, action: str) -> bool:
+    def _should_execute(self, action: str, current_time: float) -> bool:
         """
-        Determine if an action should be executed based on debouncing rules.
+        Determine if an action should be executed based on timing rules.
         
         Args:
             action: The action string to check
+            current_time: Current timestamp
             
         Returns:
             True if action should be executed
@@ -198,8 +203,9 @@ class GestureMenuController(Node):
         if action != self.previous_action:
             return True
         
-        # Allow if timeout has elapsed (permits intentional repeats)
-        if self.timeout_counter > self.repeat_timeout:
+        # Allow if repeat cooldown has elapsed (permits intentional repeats)
+        time_since_last = current_time - self.last_action_time
+        if time_since_last >= self.repeat_cooldown:
             return True
         
         return False
@@ -288,10 +294,6 @@ class GestureMenuController(Node):
         
         self.publish_tts("kill")
         self.get_logger().warn("Action: KILL (interrupt)")
-        
-        # Reset state
-        self.previous_action = 'kill'
-        self.timeout_counter = 0
     
     def _handle_stop_bag(self) -> None:
         """Stop rosbag recording"""
