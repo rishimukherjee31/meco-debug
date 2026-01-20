@@ -157,7 +157,7 @@ Jump directly to menu items 1-4:
 
 ![Up_Down](../../../videos/jump.gif)
 
-<p align="center"><em>Jumo to Selection.</em></p>
+<p align="center"><em>Jump to Selection.</em></p>
 
 ### 5. Error Handling
 
