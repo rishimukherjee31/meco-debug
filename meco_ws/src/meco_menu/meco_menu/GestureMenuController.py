@@ -38,6 +38,7 @@ Topics:
 import rclpy
 from rclpy.node import Node
 from std_msgs.msg import Int32, Int8, String
+#from configuration_msgs import JOY
 import time
 
 
@@ -166,22 +167,21 @@ class GestureMenuController(Node):
             # Unknown or unmapped gesture
             return
         
-        # Kill gesture is ALWAYS active (safety feature)
+        # Kill gesture is ALWAYS active (at the request of the safety officer)
         if action == 'kill':
             self._handle_kill()
             self.last_action_time = current_time
             self.previous_action = action
             return
         
-        # All other gestures respect the toggle
+        # other gestures respect the toggle
         if not self.gestures_enabled:
             return
         
-        # Check for repeat prevention
+        # repeat prevention
         if not self._should_execute(action, current_time):
             return
         
-        # Execute the action
         self._execute_action(action)
         
         # Update state
@@ -286,11 +286,15 @@ class GestureMenuController(Node):
     def _handle_kill(self) -> None:
         """
         Kill all processes and return to main menu.
-        This action is ALWAYS active regardless of gesture toggle.
+        This action is ALWAYS active regardless of gesture toggle. This will also TO DO: TURN OFF the motors. 
         """
         msg = Int8()
         msg.data = 99
         self.interrupt_pub.publish(msg)
+
+        #joy_msg = JOY_MSG()
+        #joy_msg.data.arm = 1
+        #self.joy_pub.publish(joy_msg)
         
         self.publish_tts("kill")
         self.get_logger().warn("Action: KILL (interrupt)")
