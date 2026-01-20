@@ -123,8 +123,8 @@ class GestureMenuController(Node):
         self.previous_action = ""
         self.publish_counter = 0
         self.timeout_counter = 0
-        self.debounce_threshold = 3  # Publish every Nth gesture
-        self.repeat_timeout = 5      # Allow repeat after N cycles
+        self.debounce_threshold = 2  # Publish every Nth gesture
+        self.repeat_timeout = 1      # Allow repeat after N cycles
         
         self.get_logger().info("Gesture Menu Controller initialized")
         self.get_logger().info(f"Gestures enabled: {self.gestures_enabled}")
